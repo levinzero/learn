@@ -8,7 +8,7 @@ let Promise = function (excutor) {
 
   function resolve(value) {
     console.log('resolve called ' + value);
-    if(_this.status === 'pending') {
+    if (_this.status === 'pending') {
       _this.status = 'resolved';
       _this.value = value;
       _this.onFulfilledCallback.forEach(fn => {
@@ -18,7 +18,7 @@ let Promise = function (excutor) {
   }
 
   function reject(reason) {
-    if(_this.status === 'pending') {
+    if (_this.status === 'pending') {
       _this.status = 'rejected';
       _this.reason = reason;
       _this.onRejectedCallback.forEach(fn => {
@@ -26,31 +26,39 @@ let Promise = function (excutor) {
       })
     }
   }
-
-  excutor(resolve, reject);
+  try {
+    excutor(resolve, reject);
+  } catch (error) {
+    reject(error);
+  }
 }
 
-Promise.prototype.then = function(onFulfilled, onRejected) {
+Promise.prototype.then = function (onFulfilled, onRejected) {
   let _this = this;
-  console.log('then prototype')
-  if (_this.status === 'pending') {   //处理异步动作的关键点
-    _this.onFulfilledCallback.push(function() {
+  let returnPromise;
+  if (_this.status === 'pending') { //处理异步动作的关键点
+    _this.onFulfilledCallback.push(function () {
       onFulfilled(_this.value);
     });
-    _this.onRejectedCallback.push(function() {
+    _this.onRejectedCallback.push(function () {
       onRejected(_this.reason);
     })
+    returnPromise = new Promise(function (resolve, reject) {
+      
+    });
   }
-  if(_this.status === 'resolved') {
+
+  if (_this.status === 'resolved') {
     onFulfilled(_this.value);
   }
 
-  if(_this.status === 'rejected') {
+  if (_this.status === 'rejected') {
     onRejected(_this.reason);
   }
 }
 
-const promi = new Promise(function(resolve, reject){
+const promi = new Promise(function (resolve, reject) {
+  console.log(t);
   setTimeout(() => {
     resolve('test');
   }, 1000);
