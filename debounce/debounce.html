@@ -6,8 +6,14 @@
     <meta http-equiv="x-ua-compatible" content="IE=edge, chrome=1">
     <title>debounce</title>
     <style>
-        #container{
-            width: 100%; height: 200px; line-height: 200px; text-align: center; color: #fff; background-color: #444; font-size: 30px;
+        #container {
+            width: 100%;
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+            color: #fff;
+            background-color: #444;
+            font-size: 30px;
         }
     </style>
 </head>
@@ -28,7 +34,7 @@
         function debounce(func, wait, immediate) {
             console.log('debounce call');
             var timer, result;
-            var debounceAction = function() {
+            var debounceAction = function () {
                 var context = this;
                 var args = arguments;
 
@@ -38,16 +44,16 @@
                     timer = setTimeout(() => {
                         timer = null;
                     }, wait);
-                    if(callNow) result = func.apply(context, args);
+                    if (callNow) result = func.apply(context, args);
                 } else {
-                    timer = setTimeout(function() {
+                    timer = setTimeout(function () {
                         func.apply(context, args);
                     }, wait)
                 }
                 return result;
             }
 
-            debounceAction.cancel = function() {
+            debounceAction.cancel = function () {
                 clearTimeout(timer);
                 timer = null;
             }
@@ -61,7 +67,7 @@
             var context, args;
             var previous = 0;
 
-            return function() {
+            return function () {
                 context = this;
                 args = arguments;
                 var now = +new Date();
@@ -75,15 +81,15 @@
         function throttleTwo(func, wait) {
             var context, args, timer;
 
-            return function() {
+            return function () {
                 context = this;
                 args = arguments;
                 if (!timer) {
-                    timer = setTimeout(function(){
+                    timer = setTimeout(function () {
                         timer = null;
                         func.apply(context, args);
                     }, wait);
-                } 
+                }
             }
         }
 
@@ -92,13 +98,13 @@
             var timer, context, args, result;
             var previous = 0;
 
-            var later = function() {
+            var later = function () {
                 previous = +new Date();
                 timeout = null;
                 func.apply(context, args);
             }
 
-            var throttled = function() {
+            var throttled = function () {
                 var now = +new Date();
                 var remaining = wait - (now - previous);
                 context = this;
@@ -108,14 +114,14 @@
                         clearTimeout(timer);
                         timer = null;
                     }
-										previous = now;
-										func.apply(context, args);
-                } else if(!timer) {
-									timer = setTimeout(later, remaining);
-								}
+                    previous = now;
+                    func.apply(context, args);
+                } else if (!timer) {
+                    timer = setTimeout(later, remaining);
+                }
             }
 
-						return throttled;
+            return throttled;
         }
     </script>
 </body>
