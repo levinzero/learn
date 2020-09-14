@@ -16,3 +16,16 @@ const promise = new Promise((resolve, reject) => {
 })
 
 promise.then((res) => console.log(res));
+
+class Test {
+  constructor(value) {
+    this.num = value;
+  }
+
+  add(y) {
+    return this.num + y;
+  }
+}
+
+const test = new Test(1);
+test.add(2);
