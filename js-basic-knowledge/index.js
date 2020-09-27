@@ -76,10 +76,10 @@ Array.prototype.splice = function(position, deleteCount, ...addElements) {
         array[index] = array[index - (addElements.length - deleteCount)];
       }
     } else {
-      for (let index = startIndex + deleteCount - addElements.length; index < len + deleteCount - addElements.length; index++) {
+      for (let index = startIndex + deleteCount - addElements.length; index < len - deleteCount + addElements.length; index++) {
         array[index] = array[index + (deleteCount - addElements.length)];
       }
-      for(let j = len - 1; j >= len  - deleteCount - addElements.length; j--) {
+      for(let j = len - 1; j >= len  - deleteCount + addElements.length; j--) {
         delete array[j];
       }
     }
