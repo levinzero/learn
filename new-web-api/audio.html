@@ -1,3 +1,8 @@
+<style>
+    #audio {
+        visibility: hidden;
+    }
+</style>
 <body>
     <header>
         <h2>Web APIs<h2>
@@ -8,7 +13,7 @@
             <div class="web-api-card-body">
                 <div id="error" class="close"></div>
                 <div>
-                    <audio controls src="../../胡彦斌-为你我受冷风吹.mp3" id="audio"></audio>
+                    <audio controls src="http://192.168.113.25:3000/mps" id="audio"></audio>
                 </div>
                 <div>
                     <button onclick="audioFromAudioFile.init()">Init</button>
@@ -33,7 +38,8 @@
         var volNode
         var pannerNode
         var mediaSource
-
+        var audio = document.getElementById('audio')
+        
         function init() {
             l("Init")
             try {
@@ -61,7 +67,9 @@
         }
 
         function stop() {
-            audio.stop()
+            audio.currentTime = 0
+            audio.pause()
+            
         }
 
         function changeVolume() {
@@ -69,7 +77,8 @@
         }
 
         function changePan() {
-            pannerNode.gain.value = tdocument.getElementById('panner').value
+            console.log(pannerNode)
+            pannerNode.pan.value = document.getElementById('panner').value
         }
 
         return {

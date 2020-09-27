@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box {
+            background-color: green;
+            width: 100%;
+            height: 400px;
+            position: relative;
+        }
+
+        #ball {
+            border-radius: 50%;
+            background-color: red;
+            width: 50px;
+            height: 50px;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Web APIs<h2>
+    </header>
+    <div class="web-api-cnt">
+        <div class="web-api-card">
+            <div class="web-api-card-head"> Demo - PointerLock </div>
+            <div class="web-api-card-body">
+                <div id="error" class="close"></div>
+                <div id="box">
+                    <div id="ball"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const l = console.log
+    box.addEventListener("click", () => {
+        if (box.requestPointerLock)
+            box.requestPointerLock()
+        else {
+            error.innerHTML = "PointerLock API not supported in this device."
+            error.classList.remove("close")
+        }
+    })
+
+    document.addEventListener("pointerlockchange", (e) => {
+        document.addEventListener("mousemove", (e) => {
+            const { movementX, movementY } = e
+            ball.style.top = movementX + "px"
+            ball.style.left = movementY + "px"
+        })
+    })
+</script>
+
+</html>

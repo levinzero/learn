@@ -1,0 +1,67 @@
+<style>
+    #resizeBox {
+        background: blue;
+    }
+</style>
+<body>
+    <header>
+        <h2>Web APIs<h2>
+    </header>
+    <div class="web-api-cnt">
+
+
+        <div class="web-api-card">
+            <div class="web-api-card-head">
+                Demo - ResizeObserver
+            </div>
+            <div class="web-api-card-body">
+                <div id="error" class="close"></div>
+                <div id="stat"></div>
+
+
+                <div id="resizeBoxCnt">
+                    <div id="resizeBox"></div>
+                </div>
+
+
+                <div>
+                    <span>Resize Width:<input onchange="resizeWidth(this.value)" type="range" min="0" max="100" value="0" /></span>
+                </div>
+
+
+                <div>
+                    <span>Resize Height:<input onchange="resizeHeight(this.value)" type="range" min="0" max="100" value="0" /></span>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+</body>
+
+
+<script>
+    try {
+        var resizeObserver = new ResizeObserver(entries => {
+            for(const entry of entries) {
+                    stat.innerHTML = "Box re-sized. Height:" + entry.target.style.height + " - Width:" + entry.target.style.width
+            }
+        })
+        resizeObserver.observe(resizeBox)
+    } catch(e) {
+        error.innerHTML = "ResizeObserver API not supported in this device."
+        error.classList.remove("close")        
+    }
+
+
+    function resizeWidth(e) {
+        resizeBox.style.width = `${e}px`
+    }
+
+
+    function resizeHeight(e) {
+        resizeBox.style.height = `${e}px`
+    }
+</script>
