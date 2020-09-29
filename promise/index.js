@@ -1,71 +1,82 @@
-let Promise = function (excutor) {
-  const _this = this;
-  _this.status = 'pending';
-  _this.value = undefined;
-  _this.reason = undefined;
-  _this.onFulfilledCallback = [];
-  _this.onRejectedCallback = [];
+function myPromise(excutor) {
+  this.status = 'PENDING';
+  this.value = null;
+  this.error = null;
+  this.onResolveCallback = [];
+  this.onRejectCallback = [];
+  var _this = this;
 
   function resolve(value) {
-    console.log('resolve called ' + value);
-    if (_this.status === 'pending') {
-      _this.status = 'resolved';
+    if (_this.status === 'PENDING') {
+      _this.status = 'FULLFILLED';
       _this.value = value;
-      _this.onFulfilledCallback.forEach(fn => {
-        fn();
-      });
-    }
-  }
-
-  function reject(reason) {
-    if (_this.status === 'pending') {
-      _this.status = 'rejected';
-      _this.reason = reason;
-      _this.onRejectedCallback.forEach(fn => {
-        fn();
+      _this.onResolveCallback.forEach((fn) => {
+        fn(_this.value)
       })
     }
   }
-  try {
-    excutor(resolve, reject);
-  } catch (error) {
-    reject(error);
+
+  function reject(error) {
+    if (_this.status === 'PENDING') {
+      _this.status = 'REJECTED';
+      _this.error = error;
+      _this.onRejectCallback.forEach((fn) => fn(_this.error));
+    }
   }
+
+  excutor(resolve, reject);
 }
 
-Promise.prototype.then = function (onFulfilled, onRejected) {
-  let _this = this;
-  let returnPromise;
-  if (_this.status === 'pending') { //处理异步动作的关键点
-    _this.onFulfilledCallback.push(function () {
-      onFulfilled(_this.value);
-    });
-    _this.onRejectedCallback.push(function () {
-      onRejected(_this.reason);
+function resolvePromise(bridgePromise, x, resolve, reject) {
+  if (x instanceof myPromise) {
+    x.then(y => {
+      return resolvePromise(bridgePromise, y, resolve, reject);
     })
-    returnPromise = new Promise(function (resolve, reject) {
-      
-    });
-  }
-
-  if (_this.status === 'resolved') {
-    onFulfilled(_this.value);
-  }
-
-  if (_this.status === 'rejected') {
-    onRejected(_this.reason);
   }
 }
 
-const promi = new Promise(function (resolve, reject) {
-  console.log(t);
+myPromise.prototype.then = function (onFulfilled, onRejected) {
+  if(this.status === 'PENDING') {
+    this.onResolveCallback.push(
+      () => {
+        return new myPromise((resolve, reject) => {
+          try {
+            var x = onFulfilled(this.value);
+            resolve(x);
+          } catch (error) {
+            reject(error);
+          }
+        })
+      }
+    );
+    this.onRejectCallback.push(onRejected);
+  }
+
+  if(this.status === 'FULLFILLED') {
+    onFulfilled(this.value);
+  }
+
+  if(this.status === 'REJECTED') {
+    onRejected(this.value);
+  }
+
+}
+
+var promise = new myPromise((resolve, reject) => {
   setTimeout(() => {
-    resolve('test');
-  }, 1000);
+    resolve('123');
+  }, 3000)
 });
 
-promi.then((value) => {
-  console.log('数据为: ' + value);
-}, (err) => {
-  console.log('失败：' + err);
+promise.then((value) =>{
+  console.log(value);
 });
+
+setTimeout(() => {
+  promise.then((value) =>{
+    console.log(value + 2);
+  })
+}, 4000);
+promise.then((value) => {
+  console.log(value + 1);
+})

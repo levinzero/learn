@@ -97,6 +97,27 @@ Array.prototype.splice = function(position, deleteCount, ...addElements) {
   return deleteArr;
 }
 
+Array.prototype.filter = function(callbackFn, thisArg) {
+  if(this === null || this === undefined) {
+    throw 'this isnt a array';
+  }
+
+  if(Object.prototype.toString.call(callbackFn) !== '[object Function]') {
+    throw 'callback isnt a function';
+  }
+
+  let O = Object(this);
+  let len = O.length;
+  let returnArr = [];
+  let returnArrLen = 0;
+  for(let i = 0; i < len; i++) {
+    if(callbackFn.call(thisArg, O[i], i, O)) {
+      returnArr[returnArrLen++] = O[i];
+    }
+  }
+  return returnArr;
+}
+
 var b = [1,2,3].map((item, index, array) => item + 1);
 var result = [1, 2, 3].reduce((preAccumulator, currentValue, array) => {
   return preAccumulator + currentValue;
