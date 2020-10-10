@@ -27,11 +27,17 @@ function myPromise(excutor) {
   excutor(resolve, reject);
 }
 
-function resolvePromise(bridgePromise, x, resolve, reject) {
+function resolvePromise(x, resolve, reject) {
   if (x instanceof myPromise) {
-    x.then(y => {
-      return resolvePromise(bridgePromise, y, resolve, reject);
-    })
+    if (x.status === 'PENDING') {
+      x.then(y => {
+        resolvePromise(y, resolve, reject);
+      }, error => reject(error));
+    } else {
+      resolve(x);
+    }
+  } else {
+    resolve(x);
   }
 }
 
@@ -39,25 +45,39 @@ myPromise.prototype.then = function (onFulfilled, onRejected) {
   if(this.status === 'PENDING') {
     this.onResolveCallback.push(
       () => {
-        return new myPromise((resolve, reject) => {
+        new myPromise((resolve, reject) => {
           try {
             var x = onFulfilled(this.value);
-            resolve(x);
+            resolvePromise(x,  resolve, reject);
           } catch (error) {
             reject(error);
           }
         })
       }
     );
-    this.onRejectCallback.push(onRejected);
+    this.onRejectCallback.push((error) => onRejected(error));
   }
 
   if(this.status === 'FULLFILLED') {
-    onFulfilled(this.value);
+    new Promise((resolve, reject) => {
+      try {
+        const x = onFulfilled(this.value);
+        resolvePromise(x, resolve, reject);
+      } catch (error) {
+        reject(error);
+      }
+    })
   }
 
   if(this.status === 'REJECTED') {
-    onRejected(this.value);
+    new myPromise((resolve, reject) => {
+      try {
+        const x = onRejected(this.value);
+        resolvePromise(x, resolve, reject);
+      } catch (error) {
+        reject(error);
+      }
+    })
   }
 
 }

@@ -126,3 +126,22 @@ var result = [1, 2, 3].reduce((preAccumulator, currentValue, array) => {
 var t = [1,2,3,4,5,6,7,8,9];
 var newResult = t.splice(1, 1);
 
+
+var p = new Promise(function (resolve, reject) {
+  setTimeout(function () {
+    resolve(1);
+  }, 3000);
+})
+
+p.then(function (value) {
+  console.log('1:' + value);
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+      resolve(2);
+      
+    }, 1500);
+  })
+}).then(function (value) {
+  console.log('2:' + value);
+})
+
