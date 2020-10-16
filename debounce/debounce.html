@@ -123,6 +123,20 @@
 
             return throttled;
         }
+
+        Function.prototype.bind = function (context, ...args) {
+            const thisArg = this;
+            const thatArg = context;
+
+            function fNOP() {};
+            function fbound() {
+                tthisArg.apply(this instanceof thisArg ? this : context,
+                Array.prototype.slice.call(arguments).concat(args));
+            };
+            fNOP.prototype = this.prototype;
+            fbound.prototype = new fNOP();
+            return fbound;
+        }
     </script>
 </body>
 
