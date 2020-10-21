@@ -37,10 +37,6 @@ function reverseListBetweenMN(head, m, n) {
   pre = tail = p.next;
   cur = pre.next;
   for(let j = 0; j < count; j++) {
-    if(j > 1) {
-      return;
-    }
-    console.log(pre);
     let next = cur.next;
     cur.next = pre;
     pre = cur;
