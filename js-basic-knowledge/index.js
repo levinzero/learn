@@ -145,3 +145,39 @@ p.then(function (value) {
   console.log('2:' + value);
 })
 
+
+Function.prototype.myBind = function(context, ...args) {
+  if (typeof this !== 'function') {
+    return new Error('myBind is only use with a function');
+  }
+  const _this = this;
+  const fn = function() {};
+
+  var fbind = function() {
+    _this.apply(this instanceof _this ? this: context, args.concat(Array.prototype.slice.call(arguments)));
+  }
+  fn.prototype = this.prototype;
+  fbind.prototype = new fn();
+  return fbind;
+}
+
+function C() {
+  return this.name;
+}
+
+C.prototype.saySex = function() {
+  console.log(this.sex);
+}
+
+const obj = {name: 'foo', age: '16', sex: 'male', saySex: function() {
+  console.log(this.sex);
+}}; 
+
+const newObj = {name: 'foo1', age: '16', sex: 'female'}; 
+
+const tb = C.myBind(obj);
+const v = tb();
+
+const fun = obj.saySex;
+const newsaysex = fun.myBind(newObj);
+newsaysex();
