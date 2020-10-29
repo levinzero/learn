@@ -165,8 +165,11 @@ function C() {
   return this.name;
 }
 
-C.prototype.saySex = function() {
-  console.log(this.sex);
+C.prototype = {
+  name: 'one',
+  sayName: function() {
+    console.log(this.name);
+  }
 }
 
 const obj = {name: 'foo', age: '16', sex: 'male', saySex: function() {

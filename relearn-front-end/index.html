@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Light</title>
+    <style>
+        .traffic-light {
+            display: flex;
+            width: 140px;
+            padding: 10px;
+            background-color: black;
+            border-radius: 10px;
+        }
+        .green, .red, .yellow {
+            background-color: grey;
+            width:40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .green-active {
+            background-color: green;
+        }
+
+        .red {
+            margin-left: 10px;
+        }
+        .red-active {
+            background-color: red;
+        }
+
+        .yellow {
+            margin-left: 10px;
+        }
+        .yellow-active {
+            background-color: yellow;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="traffic-light">
+        <div class="green green-active"></div>
+        <div class="yellow"></div>
+        <div class="red"></div>
+    </div>
+    <script src="./index.js"></script>
+</body>
+</html>
