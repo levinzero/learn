@@ -24,6 +24,7 @@ function deep(node) {
 
 const list = listFactory([1,2,3,4,5]);
 
+//翻转区间链表 1->2->3->4->5->Null ---> 1->4->3->2->5->Null;
 function reverseListBetweenMN(head, m, n) {
   const count = n - m;
   let p = dummyHead = new ListNode();
