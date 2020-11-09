@@ -183,4 +183,99 @@ const v = tb();
 
 const fun = obj.saySex;
 const newsaysex = fun.myBind(newObj);
-newsaysex();
+
+
+/**
+ * 深拷贝实现代码
+ */
+
+var isObject = target => typeof target === 'object' && typeof target !== null;
+var getType = target => Object.prototype.toString.call(target);
+var canTraverse = {
+  '[object Map]': true,
+  '[object Object]': true,
+  '[object Set]': true,
+  '[object Array]': true,
+  '[object Arguments]': true,
+};
+var mapTag = '[object Map]';
+var setTag = '[object Set]';
+var numberTag = '[object Number]';
+var stringTag = '[object String]';
+var boolTag = '[object Boolean]';
+var regexpTag = '[object RegExp]';
+var dateTag = '[object Date]';
+var errorTag = '[object Error]';
+var symbolTag = '[object Symbol]';
+var funcTag = '[object Function]';
+
+var handleRegExp = function(target) {
+  const { source,  flags } = target;
+  return new target.constructor(source, flags);
+}
+
+var handleNotTraverse = function(target, type) {
+  console.log(type);
+  var Ctor = target.constructor;
+  switch(type) {
+    case numberTag:
+      return new Object(Number.prototype.valueOf(target));
+    case stringTag:
+      return new Object(String.prototype.valueOf(target));
+    case boolTag:
+      return new Object(Boolean.prototype.valueOf(target));
+    case regexpTag:
+      return handleRegExp(target);
+    case symbolTag:
+      return new Object(Symbol.prototype.valueOf(target));
+    case errorTag:
+    case dateTag:
+      return new Ctor(target);
+    case funcTag:
+      return;
+    default:
+      return new Ctor(target);
+  }
+}
+
+
+function cloneDeep(target, map = new WeakMap()) {
+  var cloneTarget;
+  if(!isObject(target)) {
+    return target;
+  }
+  var type = getType(target);
+  if(!canTraverse[type]) {
+    return handleNotTraverse(target, type);
+  } else {
+    var ctor = target.constructor;
+    cloneTarget = new ctor();
+  }
+  if(map.get(target)) {
+    return target;
+  }
+  map.set(target, true);
+  if(type === mapTag) {
+    target.forEach((item, key) => {
+      cloneTarget.set(cloneDeep(key, map), cloneDeep(item, map))
+    })
+  }
+  
+  if(type === setTag) {
+    target.forEach((item) => {
+      cloneTarget.add(cloneDeep(item, map));
+    })
+  }
+  
+  for(let key in target) {
+    if(target.hasOwnProperty(key)) {
+      cloneTarget[key] = cloneDeep(target[key], map)
+    }
+  }
+  return cloneTarget;
+}
+
+
+var obj = {a: 1, b: {c: 2}, d: 3};
+obj.e = obj;
+var cloneObj = cloneDeep(obj);

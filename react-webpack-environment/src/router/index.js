@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Link, Switch } from "react-router-dom";
 
-import Home from "@/pages/Home";
+import { Home } from "@/pages/Home";
 import Hook from '@/pages/Hook';
 // import Count from "../pages/Count.jsx";
 const PrimaryLayout = () => (

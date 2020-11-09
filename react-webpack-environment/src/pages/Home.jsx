@@ -1,12 +1,13 @@
-import React from 'react';
-import './home.scss';
+import React, { useState } from 'react';
 
-export default class Home extends React.PureComponent {
-  constructor(props) {
-    super(props);
-   }
-  render() {
-    const html = <div className="homePage">Home Page</div>;
-    return html;
-  }
+export const Home = (props) => {
+  const [name, setName] = useState('don');
+  const [password, setPassword] = useState('donpassword');
+  console.log(useState('don'));
+  return (
+    <React.Fragment>
+      <input value={name} onChange={e => setName(e.target.value)}/>
+      <input value={password} onChange={e => setPassword(e.target.value)}/>
+    </React.Fragment>
+  );
 }
