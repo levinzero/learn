@@ -8,19 +8,23 @@ function myPromise(excutor) {
 
   function resolve(value) {
     if (_this.status === 'PENDING') {
-      _this.status = 'FULLFILLED';
-      _this.value = value;
-      _this.onResolveCallback.forEach((fn) => {
-        fn(_this.value)
+      setTimeout(function(){
+        _this.status = 'FULLFILLED';
+        _this.value = value;
+        _this.onResolveCallback.forEach((fn) => {
+          fn(_this.value)
+        })
       })
     }
   }
 
   function reject(error) {
     if (_this.status === 'PENDING') {
-      _this.status = 'REJECTED';
-      _this.error = error;
-      _this.onRejectCallback.forEach((fn) => fn(_this.error));
+      setTimeout(function () {
+        _this.status = 'REJECTED';
+        _this.error = error;
+        _this.onRejectCallback.forEach((fn) => fn(_this.error));ß
+      })
     }
   }
 
@@ -42,46 +46,110 @@ function resolvePromise(x, resolve, reject) {
 }
 
 myPromise.prototype.then = function (onFulfilled, onRejected) {
-  if(this.status === 'PENDING') {
-    this.onResolveCallback.push(
-      () => {
-        new myPromise((resolve, reject) => {
+    if (this.status === 'PENDING') {
+      return bridgePromise = new myPromise((resolve, reject) => {
+        this.onResolveCallback.push(
+          (value) => {
+            try {
+              var x = onFulfilled(value);
+              resolvePromise(bridgePromise, x, resolve, reject);
+            } catch (error) {
+              reject(error);
+            }
+          })
+        this.onRejectCallback.push(
+          (erroe) => {
+            try {
+              var x = onRejected(error);
+              resolvePromise(bridgePromise, x, resolve, reject);
+            } catch (error) {
+              onRejected(error);
+            }
+          }
+        )
+        });
+      }
+      if (this.status === 'FULLFILLED') {
+        return bridgePromise = new myPromise((resolve, reject) => {
           try {
-            var x = onFulfilled(this.value);
-            resolvePromise(x,  resolve, reject);
+            const x = onFulfilled(this.value);
+            resolvePromise(x, resolve, reject);
           } catch (error) {
             reject(error);
           }
         })
       }
-    );
-    this.onRejectCallback.push((error) => onRejected(error));
-  }
 
-  if(this.status === 'FULLFILLED') {
-    new Promise((resolve, reject) => {
-      try {
-        const x = onFulfilled(this.value);
-        resolvePromise(x, resolve, reject);
-      } catch (error) {
-        reject(error);
+      if (this.status === 'REJECTED') {
+        var bridgePromise = new myPromise((resolve, reject) => {
+          try {
+            const x = onRejected(this.error);
+            resolvePromise(bridgePromise, x, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        })
       }
-    })
-  }
 
-  if(this.status === 'REJECTED') {
-    new myPromise((resolve, reject) => {
-      try {
-        const x = onRejected(this.value);
-        resolvePromise(x, resolve, reject);
-      } catch (error) {
+    }
+
+myPromise.prototype.all = function(promises) {
+  return new myPromise((resolve, reject) => {
+    let result = [];
+    let len = promises.length;
+    if(len === 0) {
+      resolve(result);
+      return;
+    }
+
+    function handleData(data, index) {
+      result[index] = data;
+      if(index === len - 1) resolve(result);
+    }
+
+    for(let i = 0; i < len; i++) {
+      myPromise.resolve(promises[i]).then((data) => {
+        handleData(data, i);
+      }).catch(error => {
         reject(error);
-      }
-    })
-  }
-
+      })
+    }
+  })
 }
 
+myPromise.prototype.resolve = function(param) {
+  if(param instanceof Promise) return param;
+  return new myPromise((resolve, reject) => {
+    if(param && param.then && typeof param.then === 'function') {
+      param.then(resolve, reject);
+    } else {
+      resolve(param);
+    }
+  })
+}
+
+myPromise.prototype.reject = function(reson) {
+  return new myPromise((resolve, reject) => {
+    reject(reson);
+  })
+}
+
+myPromise.prototype.race = function(promises) {
+  return new myPromise((resolve, reject) =>{
+    var len = promises.length;
+    if(len === 0) return;
+
+    for(var i = 0; i <len; i++) {
+      myPromise.resolve(promises[i]).then(data => {
+        resolve(data);
+        return;
+      }).catch (error => {
+        reject(error);
+        return;
+      })
+    }
+  })
+}
 var promise = new myPromise((resolve, reject) => {
   setTimeout(() => {
     resolve('123');
