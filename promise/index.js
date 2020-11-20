@@ -58,7 +58,7 @@ myPromise.prototype.then = function (onFulfilled, onRejected) {
             }
           })
         this.onRejectCallback.push(
-          (erroe) => {
+          (error) => {
             try {
               var x = onRejected(error);
               resolvePromise(bridgePromise, x, resolve, reject);
